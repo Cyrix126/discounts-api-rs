@@ -62,9 +62,8 @@ impl Client {
         self.delete(url).send().await?;
         Ok(())
     }
-    pub async fn check_code_validity(&self, code: &str) -> Result<(), DiscountClientError> {
-        let url = format!("{}/check_validity/{}", self.default_url, code);
-        self.get(url).send().await?;
-        Ok(())
+    pub async fn read_discount_by_code(&self, code: &str) -> Result<Discount, DiscountClientError> {
+        let url = format!("{}/discounts/code/{}", self.default_url, code);
+        Ok(self.get(url).send().await?.json().await?)
     }
 }

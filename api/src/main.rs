@@ -9,7 +9,9 @@ use config::Config;
 use db::run_migrations;
 use deadpool_diesel::postgres::Pool;
 use get_pass::url::add_pass_to_url;
-use handler::{all_discounts, check_code, delete_discount, read_discount, update_discount};
+use handler::{
+    all_discounts, delete_discount, read_discount, read_discount_by_code, update_discount,
+};
 #[derive(Clone)]
 struct AppState {
     config: Config,
@@ -44,6 +46,6 @@ fn router(state: AppState) -> Router {
                 .put(update_discount)
                 .delete(delete_discount),
         )
-        .route("/check_validity/:code", get(check_code))
+        .route("discounts/code/:code", get(read_discount_by_code))
         .with_state(state)
 }

@@ -72,21 +72,22 @@ pub async fn delete_discount(
     .await??;
     Ok(())
 }
-pub async fn check_code(
+pub async fn read_discount_by_code(
     State(state): State<AppState>,
     Path(code): Path<String>,
 ) -> Result<impl IntoResponse, AppError> {
     let conn = state.pool.get().await?;
-    conn.interact(move |conn| {
-        discounts
-            .filter(discounts_common::schema::discounts::code.eq(&code))
-            .select(Discount::as_select())
-            .first(conn)?;
-        Ok::<(), AppError>(())
-    })
-    .await??;
-    // if no errors here, the discount exist
-    Ok(())
+    Ok(Json(
+        conn.interact(move |conn| {
+            Ok::<Discount, AppError>(
+                discounts
+                    .filter(discounts_common::schema::discounts::code.eq(&code))
+                    .select(Discount::as_select())
+                    .first(conn)?,
+            )
+        })
+        .await??,
+    ))
 }
 pub async fn all_discounts(State(state): State<AppState>) -> Result<impl IntoResponse, AppError> {
     let conn = state.pool.get().await?;
