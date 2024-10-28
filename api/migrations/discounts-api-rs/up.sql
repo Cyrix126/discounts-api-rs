@@ -1,0 +1,7 @@
+ CREATE TABLE discounts (
+   id SERIAL PRIMARY KEY,
+   code TEXT NOT NULL UNIQUE,
+   percentage SMALLSERIAL NOT NULL,
+   date_begin TIMESTAMP WITH TIME ZONE,
+   date_end TIMESTAMP WITH TIME ZONE
+ );
