@@ -17,4 +17,7 @@ pub enum AppError {
     #[error("Incorrect request")]
     #[status(axum::http::StatusCode::BAD_REQUEST)]
     BadRequest,
+    #[error("Invalid code, discount is not valid for this data")]
+    #[status(axum::http::StatusCode::BAD_REQUEST)]
+    CodeInvalid,
 }

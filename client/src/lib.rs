@@ -66,4 +66,8 @@ impl Client {
         let url = format!("{}/discounts/code/{}", self.default_url, code);
         Ok(self.get(url).send().await?.json().await?)
     }
+    pub async fn percentage_by_code(&self, code: &str) -> Result<bool, DiscountClientError> {
+        let url = format!("{}/discounts/percentage/{}", self.default_url, code);
+        Ok(self.get(url).send().await?.json().await?)
+    }
 }

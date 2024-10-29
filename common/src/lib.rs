@@ -27,3 +27,21 @@ pub struct Discount {
     pub date_begin: Option<DateTime<Utc>>,
     pub date_end: Option<DateTime<Utc>>,
 }
+
+impl Discount {
+    pub fn is_time_valid(&self) -> bool {
+        if let Some(begin) = self.date_begin {
+            let now = Utc::now();
+            if begin > now {
+                return false;
+            }
+        }
+        if let Some(end) = self.date_end {
+            let now = Utc::now();
+            if end < now {
+                return false;
+            }
+        }
+        true
+    }
+}

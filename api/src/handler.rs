@@ -72,6 +72,7 @@ pub async fn delete_discount(
     .await??;
     Ok(())
 }
+/// Used by cart API to check if code valid
 pub async fn read_discount_by_code(
     State(state): State<AppState>,
     Path(code): Path<String>,
@@ -88,6 +89,25 @@ pub async fn read_discount_by_code(
         })
         .await??,
     ))
+}
+/// used for public, needs anti brutforce measure, returns only if code valid in time period
+pub async fn percentage_by_code(
+    State(state): State<AppState>,
+    Path(code): Path<String>,
+) -> Result<impl IntoResponse, AppError> {
+    let conn = state.pool.get().await?;
+    conn.interact(move |conn| {
+        let discount: Discount = discounts
+            .filter(discounts_common::schema::discounts::code.eq(&code))
+            .select(Discount::as_select())
+            .first(conn)?;
+        if discount.is_time_valid() {
+            Ok(Json(discount.percentage as u8))
+        } else {
+            Err(AppError::CodeInvalid)
+        }
+    })
+    .await?
 }
 pub async fn all_discounts(State(state): State<AppState>) -> Result<impl IntoResponse, AppError> {
     let conn = state.pool.get().await?;

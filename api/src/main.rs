@@ -10,7 +10,8 @@ use db::run_migrations;
 use deadpool_diesel::postgres::Pool;
 use get_pass::url::add_pass_to_url;
 use handler::{
-    all_discounts, delete_discount, read_discount, read_discount_by_code, update_discount,
+    all_discounts, delete_discount, percentage_by_code, read_discount, read_discount_by_code,
+    update_discount,
 };
 #[derive(Clone)]
 struct AppState {
@@ -47,5 +48,7 @@ fn router(state: AppState) -> Router {
                 .delete(delete_discount),
         )
         .route("discounts/code/:code", get(read_discount_by_code))
+        // used for public, needs anti brutforce measure, returns only if code is valid
+        .route("discounts/percentage/:code", get(percentage_by_code))
         .with_state(state)
 }
